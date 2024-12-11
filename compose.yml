@@ -1,0 +1,36 @@
+services:
+  web:
+    build:
+      context: ./fastapi
+      dockerfile: Dockerfile
+    ports:
+      - "8000:8000"
+    volumes:
+      - ./fastapi:/app
+    networks:
+      - s2T-ai-networks
+
+  ollama:
+    build:
+      context: ./ollama
+      dockerfile: Dockerfile
+    ports:
+      - "11434:11434"
+    volumes:
+      - LLMModel-vol:/root/.ollama/models
+    networks:
+      - s2T-ai-networks
+    entrypoint: ["/usr/bin/bash", "/pull-phi3.sh"]
+    # deploy:
+    #   resources:
+    #     limits:
+    #       cpus: "4.0"
+    #       memory: 6g
+
+networks:
+  s2T-ai-networks:
+    driver: bridge
+
+volumes:
+  LLMModel-vol:
+    driver: local
